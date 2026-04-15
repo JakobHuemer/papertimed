@@ -1,12 +1,12 @@
-use std::{collections::HashSet, sync::Arc};
+use std::{
+    collections::HashSet,
+    sync::{Arc, RwLock},
+};
 
 use chrono::{DateTime, FixedOffset, NaiveTime, Offset, TimeZone, WeekdaySet};
 use config::Config;
 use serde::Deserialize;
-use tokio::sync::{
-    RwLock,
-    broadcast::{self, Receiver, Sender},
-};
+use tokio::sync::broadcast::{self, Receiver, Sender};
 
 #[derive(Debug)]
 pub struct AppConfig {
@@ -18,21 +18,38 @@ pub struct AppConfig {
 
 impl AppConfig {
     pub fn new() -> Self {
+        let settings = Self::load_config();
+
+        let (config_tx, config_rx) = broadcast::channel::<AppSettings>(16);
+
+        Self {
+            config_rx,
+            config_tx,
+            app_settings: Arc::new(RwLock::new(settings)),
+        }
+    }
+
+    pub async fn reload(&mut self) {
+        let settings = Self::load_config();
+
+        {
+            let mut config = self.app_settings.write().unwrap();
+            *config = settings.clone();
+        }
+
+        let _ = self.config_tx.send(settings);
+    }
+
+    fn load_config() -> AppSettings {
         let settings = Config::builder()
             .add_source(config::File::with_name("examples/config"))
             .add_source(config::Environment::with_prefix("APP"))
             .build()
             .unwrap();
 
-        let (config_tx, config_rx) = broadcast::channel::<AppSettings>(16);
-
         let app_settings = settings.try_deserialize::<AppSettings>().unwrap();
 
-        Self {
-            config_rx,
-            config_tx,
-            app_settings: Arc::new(RwLock::new(app_settings)),
-        }
+        app_settings
     }
 }
 
