@@ -55,9 +55,9 @@ impl AppConfig {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct AppSettings {
-    global: GlobalSettings,
+    pub global: GlobalSettings,
     #[serde(default)]
-    wallpapers: Vec<Wallpaper>,
+    pub wallpapers: Vec<Wallpaper>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

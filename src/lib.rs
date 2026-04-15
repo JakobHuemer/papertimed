@@ -2,6 +2,7 @@ use crate::config::AppConfig;
 
 mod config;
 mod daemon;
+mod evaluator;
 
 pub fn run() {
     let d = daemon::Daemon::new();
