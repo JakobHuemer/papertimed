@@ -57,5 +57,6 @@ These rule types exist:
   etc.
 - [ ] Wallpaper schedules support custom metadata that can be forwarded to the
   wallpaper utility
-
+- [ ] Manual and automatic timezone selection
+- [ ] Custom schedule definition with a shell command
 
