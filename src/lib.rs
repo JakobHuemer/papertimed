@@ -4,12 +4,15 @@ mod config;
 mod daemon;
 mod evaluator;
 
-pub fn run() {
-    let d = daemon::Daemon::new();
-
+pub async fn run() {
     let app_config = AppConfig::new();
+
+    let d = daemon::Daemon::new(
+        app_config.app_settings.clone(),
+        app_config.config_rx.resubscribe(),
+    );
 
     dbg!(app_config);
 
-    d.start();
+    d.start().await;
 }

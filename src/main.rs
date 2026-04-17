@@ -1,3 +1,4 @@
-fn main() {
-    papertimed::run();
+#[tokio::main]
+async fn main() {
+    papertimed::run().await;
 }

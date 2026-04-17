@@ -10,10 +10,10 @@ use tokio::sync::broadcast::{self, Receiver, Sender};
 
 #[derive(Debug)]
 pub struct AppConfig {
-    config_rx: Receiver<AppSettings>,
+    pub config_rx: Receiver<AppSettings>,
     config_tx: Sender<AppSettings>,
 
-    pub app_settings: Arc<RwLock<AppSettings>>,
+    pub app_settings: AppSettings,
 }
 
 impl AppConfig {
@@ -25,17 +25,14 @@ impl AppConfig {
         Self {
             config_rx,
             config_tx,
-            app_settings: Arc::new(RwLock::new(settings)),
+            app_settings: settings,
         }
     }
 
     pub async fn reload(&mut self) {
         let settings = Self::load_config();
 
-        {
-            let mut config = self.app_settings.write().unwrap();
-            *config = settings.clone();
-        }
+        self.app_settings = settings.clone();
 
         let _ = self.config_tx.send(settings);
     }
