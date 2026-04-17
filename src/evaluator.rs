@@ -2,6 +2,7 @@ use chrono::{Datelike, Local};
 
 use crate::config::{AppSettings, Rule, Wallpaper};
 
+#[derive(Clone, Debug)]
 pub struct Evaluator {}
 
 impl Evaluator {

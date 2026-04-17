@@ -10,15 +10,6 @@ temp = "hello world"
 
         [[wallpapers.schedules.rules]]
 
-            Day = { from = "01:00", to = "15:00" }
+            Week = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
 
-    [[wallpapers.schedules]]
-
-        [[wallpapers.schedules.rules]]
-
-            Day = { from = "05:00", to = "15:00" }
-
-        [[wallpapers.schedules.rules]]
-
-            Year = [1, 3, 4]
 

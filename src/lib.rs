@@ -3,6 +3,7 @@ use crate::config::AppConfig;
 mod config;
 mod daemon;
 mod evaluator;
+mod adapter;
 
 pub async fn run() {
     let app_config = AppConfig::new();

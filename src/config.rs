@@ -1,4 +1,3 @@
-
 use chrono::{NaiveTime, WeekdaySet};
 use config::Config;
 use serde::Deserialize;
@@ -39,8 +38,6 @@ impl AppConfig {
             .add_source(config::Environment::with_prefix("APP"))
             .build()
             .unwrap();
-
-        
 
         settings.try_deserialize::<AppSettings>().unwrap()
     }

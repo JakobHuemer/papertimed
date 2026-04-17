@@ -7,15 +7,23 @@ use std::{
 use tokio::{process::Command, sync::broadcast::Receiver, time::sleep};
 
 use crate::{
+    adapter::{AdapterDispatcher, AdapterInput, WallpaperAdapter, wpaperd::WpaperdAdapter},
     config::{AppSettings, Wallpaper},
     evaluator::Evaluator,
 };
 
+#[derive(Debug)]
 pub struct Daemon {
     evaluator: Evaluator,
     settings: AppSettings,
     settings_rx: Receiver<AppSettings>,
-    previous_image: Option<Wallpaper>,
+    state: WallpaperState,
+    adapter: AdapterDispatcher,
+}
+
+#[derive(Default, Clone, Debug)]
+pub struct WallpaperState {
+    pub current_wallpaper: Option<Wallpaper>,
 }
 
 impl Daemon {
@@ -24,7 +32,8 @@ impl Daemon {
             evaluator: Evaluator::new(),
             settings_rx,
             settings,
-            previous_image: None,
+            state: WallpaperState::default(),
+            adapter: AdapterDispatcher::Wpaperd(WpaperdAdapter::default()),
         }
     }
 
@@ -32,25 +41,23 @@ impl Daemon {
         loop {
             if let Some(bg) = self.evaluator.evaluate_wallpaper(&self.settings)
                 && !self
-                    .previous_image
+                    .state
+                    .current_wallpaper
                     .as_ref()
                     .is_some_and(|prev_bg| prev_bg.filename == bg.filename)
             {
                 println!("BG: {:?}", bg);
 
-                self.previous_image = Some(bg.clone());
+                self.state.current_wallpaper = Some(bg.clone());
 
-                // change wallpaper
-                let config_path = PathBuf::from("./out/config/wpaperd/wallpaper.toml");
+                dbg!(&self.state);
 
-                let new_content = format!("[default]\npath = '{}'", bg.filename);
-
-                fs::create_dir_all(&config_path.parent().unwrap()).unwrap();
-                fs::write(config_path, new_content).unwrap();
-
-                let reload_command = Command::new("wpwaperctl")
-                    .args(&["reload-wallpaper"])
-                    .status();
+                let _ = match &mut self.adapter {
+                    AdapterDispatcher::Wpaperd(adapter) => adapter.update(self.state.clone()).await,
+                }
+                .inspect_err(|e| {
+                    dbg!(e);
+                });
             } else {
                 println!("Nothing");
             }
