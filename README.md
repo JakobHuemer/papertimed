@@ -14,10 +14,14 @@ Supported file formats are: `JSON`, `TOML`, `YAML`, `INI`, `RON`, `JSON5`, `CORN
 
 An example of a valid configuration is in [examples/config.toml](./examples/config.toml).
 
+### Supported Adapters
+
+- `wpaperd`: Overwrites the configuration at `~/.config/wpaperd/wallpaper.toml`
 
 ### `global`
 
-- `adapter`: The background ulility e.g. `wpaperd`.
+- `adapter`: The background ulility e.g. `wpaperd`. see at [Supported
+  Adapters](#supported-adapters)
 
 ### `wallpapers`
 

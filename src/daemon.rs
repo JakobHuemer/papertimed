@@ -7,7 +7,10 @@ use std::{
 use tokio::{process::Command, sync::broadcast::Receiver, time::sleep};
 
 use crate::{
-    adapter::{AdapterDispatcher, AdapterInput, WallpaperAdapter, wpaperd::WpaperdAdapter},
+    adapter::{
+        AdapterDispatcher, AdapterInput, WallpaperAdapter, hyprpaper::HyprpaperAdapter,
+        wpaperd::WpaperdAdapter,
+    },
     config::{AppSettings, Wallpaper},
     evaluator::Evaluator,
 };
@@ -33,7 +36,7 @@ impl Daemon {
             settings_rx,
             settings,
             state: WallpaperState::default(),
-            adapter: AdapterDispatcher::Wpaperd(WpaperdAdapter::default()),
+            adapter: AdapterDispatcher::Hyprpaper(HyprpaperAdapter::default()),
         }
     }
 
@@ -50,14 +53,21 @@ impl Daemon {
 
                 self.state.current_wallpaper = Some(bg.clone());
 
-                dbg!(&self.state);
+                match &mut self.adapter {
+                    AdapterDispatcher::Hyprpaper(a) => {
+                        println!("LAJSDÖAJSDÖLJASDÖLJASÖLDJÖLASJDÖL");
+                        if let Err(e) = a.update(self.state.clone()).await {
+                            dbg!(e);
+                        }
+                    }
+                    AdapterDispatcher::Wpaperd(a) => {
+                        if let Err(e) = a.update(self.state.clone()).await {
+                            dbg!(e);
+                        }
+                    }
+                };
 
-                let _ = match &mut self.adapter {
-                    AdapterDispatcher::Wpaperd(adapter) => adapter.update(self.state.clone()).await,
-                }
-                .inspect_err(|e| {
-                    dbg!(e);
-                });
+                dbg!(&self.state);
             } else {
                 println!("Nothing");
             }
