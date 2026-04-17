@@ -17,6 +17,8 @@ An example of a valid configuration is in [examples/config.toml](./examples/conf
 ### Supported Adapters
 
 - `wpaperd`: Overwrites the configuration at `~/.config/wpaperd/wallpaper.toml`
+- `hyprpaper`: Required hyprpaper ipc to be turned on. [More info on
+  hyprpaper](https://wiki.hypr.land/Hypr-Ecosystem/hyprpaper/)
 
 ### `global`
 
@@ -50,9 +52,9 @@ schedule consisting of:
 ## Features
 
 - [X] Basic daily/weekly/yearly wallpaper schedule for `wpaperd` utility
-- [ ] Support for multiple wallpaper utilities
+- [x] Support for multiple wallpaper utilities
 - [ ] Per monitor schedules
-- [ ] Preset profiles for different wallpaper utilities like `wpaperd`, `hyprpaper`,
+- [X] Preset profiles for different wallpaper utilities like `wpaperd`, `hyprpaper`,
   etc.
 - [ ] Wallpaper schedules support custom metadata that can be forwarded to the
   wallpaper utility
