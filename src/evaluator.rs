@@ -1,4 +1,6 @@
-use crate::config::AppSettings;
+use chrono::{DateTime, Datelike, Local};
+
+use crate::config::{AppSettings, Rule, Wallpaper};
 
 pub struct Evaluator {}
 
@@ -8,19 +10,22 @@ impl Evaluator {
     }
 
     /// Evaluates the background image file path for a given AppSettings struct.
-    pub fn evaluate_background(&self, settings: AppSettings) -> String {
-
+    pub fn evaluate_wallpaper<'b>(&self, settings: &'b AppSettings) -> Option<&'b Wallpaper> {
         // walk through
-        
-        for wp in settings.wallpapers.iter() {
-            for schedules in wp.schedules.iter() {
-                for rules in schedules.rules.iter() {
+        let now = Local::now().naive_local();
 
-                }
-            }
-        }
+        let mut bg = settings.wallpapers.iter().filter(|wp| {
+            wp.schedules.iter().any(|schedule| {
+                schedule.rules.iter().all(|rule| match rule {
+                    Rule::Day { from, to } => *from <= now.time() && *to > now.time(),
+                    Rule::Week(wrapped_week_day_set) => {
+                        wrapped_week_day_set.week_day.contains(now.weekday())
+                    }
+                    Rule::Year(items) => items.contains(&now.ordinal()),
+                })
+            })
+        });
 
-
-        todo!()
+        bg.next()
     }
 }
