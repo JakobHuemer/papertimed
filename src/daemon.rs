@@ -11,7 +11,7 @@ use crate::{
         AdapterDispatcher, AdapterInput, WallpaperAdapter, hyprpaper::HyprpaperAdapter,
         wpaperd::WpaperdAdapter,
     },
-    config::{AppSettings, Wallpaper},
+    config::{Adapter, AppSettings, Wallpaper},
     evaluator::Evaluator,
 };
 
@@ -31,12 +31,17 @@ pub struct WallpaperState {
 
 impl Daemon {
     pub fn new(settings: AppSettings, settings_rx: Receiver<AppSettings>) -> Self {
+        let adapter = match settings.global.adapter {
+            Adapter::Wpaperd => AdapterDispatcher::Wpaperd(WpaperdAdapter::default()),
+            Adapter::Hyprpaper => AdapterDispatcher::Hyprpaper(HyprpaperAdapter::default()),
+        };
+
         Self {
             evaluator: Evaluator::new(),
             settings_rx,
             settings,
             state: WallpaperState::default(),
-            adapter: AdapterDispatcher::Hyprpaper(HyprpaperAdapter::default()),
+            adapter,
         }
     }
 

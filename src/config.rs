@@ -61,6 +61,7 @@ pub struct GlobalSettings {
 #[serde(rename_all = "snake_case")]
 pub enum Adapter {
     Wpaperd,
+    Hyprpaper
 }
 
 #[derive(Clone, Debug, Deserialize)]
