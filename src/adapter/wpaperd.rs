@@ -1,4 +1,8 @@
-use std::{fs, path::PathBuf, process::ExitStatus};
+use std::{
+    env, fs,
+    path::{Path, PathBuf},
+    process::ExitStatus,
+};
 
 use thiserror::Error;
 use tokio::process::Command;
@@ -26,12 +30,17 @@ impl WallpaperAdapter for WpaperdAdapter {
 
     async fn update(&mut self, input: Self::Input) -> Result<(), Self::Error> {
         if let Some(bg) = input.current_wallpaper {
-            let config_path = PathBuf::from("./out/config/wpaperd/wallpaper.toml");
+            let mut config_path = env::home_dir().unwrap();
+            let config_path = config_path.join(PathBuf::from(".config/wpaperd/wallpaper.toml"));
 
             let new_content = format!("[default]\npath = '{}'", bg.filename);
 
-            fs::create_dir_all(&config_path.parent().unwrap()).unwrap();
-            fs::write(config_path, new_content).unwrap();
+            let config_parent_dir = config_path.parent().to_owned().unwrap().to_path_buf();
+
+            fs::create_dir_all(&config_parent_dir)
+                .map_err(|_| WpaperdError::CreateAllDirs(config_parent_dir))?;
+            fs::write(&config_path, new_content)
+                .map_err(|_| WpaperdError::WriteToConfig(config_path))?;
 
             let status = Command::new("wpaperctl")
                 .args(&["reload-wallpaper"])
