@@ -1,4 +1,4 @@
-use chrono::{DateTime, Datelike, Local};
+use chrono::{Datelike, Local};
 
 use crate::config::{AppSettings, Rule, Wallpaper};
 

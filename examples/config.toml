@@ -8,16 +8,11 @@ temp = "hello world"
 
     [[wallpapers.schedules]]
 
-        repetition = "Day"
-
         [[wallpapers.schedules.rules]]
 
             Day = { from = "01:00", to = "15:00" }
 
-
     [[wallpapers.schedules]]
-
-        repetition = "Year"
 
         [[wallpapers.schedules.rules]]
 

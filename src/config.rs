@@ -1,9 +1,5 @@
-use std::{
-    collections::HashSet,
-    sync::{Arc, RwLock},
-};
 
-use chrono::{DateTime, FixedOffset, NaiveTime, Offset, TimeZone, WeekdaySet};
+use chrono::{NaiveTime, WeekdaySet};
 use config::Config;
 use serde::Deserialize;
 use tokio::sync::broadcast::{self, Receiver, Sender};
@@ -44,9 +40,9 @@ impl AppConfig {
             .build()
             .unwrap();
 
-        let app_settings = settings.try_deserialize::<AppSettings>().unwrap();
+        
 
-        app_settings
+        settings.try_deserialize::<AppSettings>().unwrap()
     }
 }
 
@@ -72,14 +68,6 @@ pub struct Wallpaper {
 pub struct RepetitionSchedule {
     #[serde(default)]
     pub rules: Vec<Rule>,
-    pub repetition: Repetition,
-}
-
-#[derive(Clone, Copy, Debug, Deserialize)]
-pub enum Repetition {
-    Day,
-    Week,
-    Year,
 }
 
 #[derive(Clone, Debug, Deserialize)]
