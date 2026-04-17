@@ -10,6 +10,14 @@ adapter = "wpaperd"
 
         [[wallpapers.schedules.rules]]
 
-            week = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+            week_days = ["mon", "tue", "fri", "sat", "sun"]
+
+        [[wallpapers.schedules.rules]]
+
+            day_time = {from = "00:00", to = "23:00:00"}
+
+        [[wallpapers.schedules.rules]]
+
+            year_days = [1, 3, 255, 340]
 
 

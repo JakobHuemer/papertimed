@@ -61,7 +61,7 @@ pub struct GlobalSettings {
 #[serde(rename_all = "snake_case")]
 pub enum Adapter {
     Wpaperd,
-    Hyprpaper
+    Hyprpaper,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -81,9 +81,9 @@ pub struct RepetitionSchedule {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Rule {
-    Day { from: NaiveTime, to: NaiveTime },
-    Week(WrappedWeekDaySet),
-    Year(Vec<u32>),
+    DayTime { from: NaiveTime, to: NaiveTime },
+    WeekDays(WrappedWeekDaySet),
+    YearDays(Vec<u32>),
 }
 
 #[derive(Debug, Clone)]

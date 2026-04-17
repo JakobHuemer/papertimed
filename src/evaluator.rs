@@ -18,11 +18,11 @@ impl Evaluator {
         let mut bg = settings.wallpapers.iter().filter(|wp| {
             wp.schedules.iter().any(|schedule| {
                 schedule.rules.iter().all(|rule| match rule {
-                    Rule::Day { from, to } => *from <= now.time() && *to > now.time(),
-                    Rule::Week(wrapped_week_day_set) => {
+                    Rule::DayTime { from, to } => *from <= now.time() && *to > now.time(),
+                    Rule::WeekDays(wrapped_week_day_set) => {
                         wrapped_week_day_set.week_day.contains(now.weekday())
                     }
-                    Rule::Year(items) => items.contains(&now.ordinal()),
+                    Rule::YearDays(items) => items.contains(&now.ordinal()),
                 })
             })
         });
