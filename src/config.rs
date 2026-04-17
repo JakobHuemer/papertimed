@@ -44,6 +44,7 @@ impl AppConfig {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub struct AppSettings {
     pub global: GlobalSettings,
     #[serde(default)]
@@ -51,23 +52,33 @@ pub struct AppSettings {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub struct GlobalSettings {
-    pub temp: String,
+    pub adapter: Adapter,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Adapter {
+    Wpaperd,
 }
 
 #[derive(Clone, Debug, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub struct Wallpaper {
     pub filename: String,
     pub schedules: Vec<RepetitionSchedule>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub struct RepetitionSchedule {
     #[serde(default)]
     pub rules: Vec<Rule>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Rule {
     Day { from: NaiveTime, to: NaiveTime },
     Week(WrappedWeekDaySet),

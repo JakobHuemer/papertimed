@@ -1,6 +1,6 @@
 [global]
 
-temp = "hello world"
+adapter = "wpaperd"
 
 [[wallpapers]]
 
@@ -10,6 +10,6 @@ temp = "hello world"
 
         [[wallpapers.schedules.rules]]
 
-            Week = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+            week = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
 
 

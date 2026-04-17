@@ -17,7 +17,7 @@ An example of a valid configuration is in [examples/config.toml](./examples/conf
 
 ### `global`
 
-- `temp`: just a temp variable - does nothing.
+- `adapter`: The background ulility e.g. `wpaperd`.
 
 ### `wallpapers`
 
@@ -36,16 +36,16 @@ schedule consisting of:
 
 ### `wallpapers.schedules.rules`
 
-- `Day`: Define when on the day the schedule runs. e.g. 05:00 - 15:00
+- `day`: Define when on the day the schedule runs. e.g. 05:00 - 15:00
     - `from`/`to`: Daytime e.g. `05:23:50`.
     - e.g. `{ from = "05:23:50", to = "14:15:00"}`
-- `Week`: Array of days when to run this schedule. e.g. `["Monday", "Tuesday"]`
-- `Year`: Array of days in a year when to run this schedule. e.g. `[1, 4, 340]`
+- `week`: Array of days when to run this schedule. e.g. `["monday", "tuesday", "wed"]`
+- `year`: Array of days in a year when to run this schedule. e.g. `[1, 4, 340]`
 
 
 ## Features
 
-- [ ] Basic daily/weekly/yearly wallpaper schedule for `wpaperd` utility
+- [X] Basic daily/weekly/yearly wallpaper schedule for `wpaperd` utility
 - [ ] Support for multiple wallpaper utilities
 - [ ] Per monitor schedules
 - [ ] Preset profiles for different wallpaper utilities like `wpaperd`, `hyprpaper`,
