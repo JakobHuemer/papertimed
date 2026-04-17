@@ -31,15 +31,10 @@ An array of wallpapers where each element has:
 An array of all schedules where the wallpaper is scheduled to be displayed, each
 schedule consisting of:
 
-- `repetition`: Over which timeperiod the schedule runs. Possible values are `Day`, `Week` and `Year`
-- `rules`: All rules for this schedule which consists of Time, Days, etc. where
-  at the end, all rules are combined.
-
+- `rules`: All rules of must be true for the schedule to take effect. You can
+  define rules for daytime, weekday or day of the year, etc.
 
 ### `wallpapers.schedules.rules`
-
-An array of rules per schedule to make the schedule valid.
-These rule types exist:
 
 - `Day`: Define when on the day the schedule runs. e.g. 05:00 - 15:00
     - `from`/`to`: Daytime e.g. `05:23:50`.
