@@ -61,4 +61,6 @@ schedule consisting of:
 - [ ] Manual and automatic timezone selection
 - [ ] Custom schedule definition with a shell command
 - [ ] Scheduled sleep instead of polling
+- [ ] Restructure config to allow reusing wallpapers and have a binding allowing
+  config structure
 
