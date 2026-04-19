@@ -49,15 +49,16 @@ schedule consisting of:
 - `year_days`: Array of days in a year when to run this schedule. e.g. `[1, 4, 340]`
 
 
-## Features
+## Todos
 
 - [X] Basic daily/weekly/yearly wallpaper schedule for `wpaperd` utility
 - [x] Support for multiple wallpaper utilities
-- [ ] Per monitor schedules
 - [X] Preset profiles for different wallpaper utilities like `wpaperd`, `hyprpaper`,
+- [ ] Per monitor schedules
   etc.
 - [ ] Wallpaper schedules support custom metadata that can be forwarded to the
   wallpaper utility
 - [ ] Manual and automatic timezone selection
 - [ ] Custom schedule definition with a shell command
+- [ ] Scheduled sleep instead of polling
 
