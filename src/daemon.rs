@@ -44,22 +44,17 @@ impl Daemon {
         loop {
             let wallpaper_state = self.evaluator.evaluate_wallpaper(&self.settings);
 
-            println!("BG: {:?}", wallpaper_state);
-
             self.state = wallpaper_state.clone();
 
-            match &mut self.adapter {
-                AdapterDispatcher::Hyprpaper(a) => {
-                    if let Err(e) = a.update(self.state.clone()).await {
-                        dbg!(e);
-                    }
-                }
-                AdapterDispatcher::Wpaperd(a) => {
-                    if let Err(e) = a.update(self.state.clone()).await {
-                        dbg!(e);
-                    }
-                }
+            let ret = match &mut self.adapter {
+                AdapterDispatcher::Hyprpaper(a) => a.update(self.state.clone()).await,
+                AdapterDispatcher::Wpaperd(a) => a.update(self.state.clone()).await,
             };
+
+            match ret {
+                Err(e) => panic!("{}", e),
+                _ => {}
+            }
 
             sleep(Duration::from_secs(2)).await;
         }

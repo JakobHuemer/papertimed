@@ -1,5 +1,5 @@
 global: 
- adapter: hyprpaper
+ adapter: wpaperd
 
 schedules:
   - id: "school"

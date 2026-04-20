@@ -1,11 +1,12 @@
+use std::path::PathBuf;
+
 use thiserror::Error;
 
-use crate::{
-    adapter::{
-        hyprpaper::{HyprpaperAdapter, HyprpaperError},
-        wpaperd::{WpaperdAdapter, WpaperdError},
-    },
-    daemon::WallpaperState,
+const BACKUP_FILE_EXTENSION: &'static str = "pptmd-bkp";
+
+use crate::adapter::{
+    hyprpaper::{HyprpaperAdapter, HyprpaperError},
+    wpaperd::{WpaperdAdapter, WpaperdError},
 };
 
 pub mod hyprpaper;
@@ -21,11 +22,6 @@ pub trait WallpaperAdapter: Default {
 pub enum AdapterDispatcher {
     Wpaperd(WpaperdAdapter),
     Hyprpaper(HyprpaperAdapter),
-}
-
-#[derive(Debug, Clone)]
-pub enum AdapterInput {
-    Wpaperd(WallpaperState),
 }
 
 #[derive(Clone, Debug, Error)]
@@ -45,4 +41,43 @@ pub enum AdapterError {
         status_code: i32,
         error_out: String,
     },
+
+    #[error("write_file_save: {0}")]
+    WriteFile(#[from] WriteFileSaveError),
+}
+
+#[derive(Debug, Clone, Error)]
+pub enum WriteFileSaveError {
+    #[error("backup file already exists")]
+    BackupFileExist,
+    #[error("could not write backup file")]
+    CouldNotWriteBackupFile,
+    #[error("could not write file")]
+    CouldNotWriteFile,
+    #[error("could not create directories")]
+    CouldNotCreateDirectories,
+}
+
+/// Takes a filepath and some content to write to a file. If the target file
+/// already exist, copy the original file with a `.pptmd-bkp` extension.
+fn write_file_save(path: &PathBuf, content: String) -> Result<(), WriteFileSaveError> {
+    use std::fs;
+
+    if let Some(parent) = path.parent() {
+        if !parent.exists() {
+            fs::create_dir_all(parent)
+                .map_err(|_| WriteFileSaveError::CouldNotCreateDirectories)?;
+        }
+    }
+
+    if path.exists() {
+        let mut backup_path = path.clone();
+        backup_path.set_extension(BACKUP_FILE_EXTENSION);
+        if backup_path.exists() {
+            return Err(WriteFileSaveError::BackupFileExist);
+        }
+        fs::copy(&path, &backup_path).map_err(|_| WriteFileSaveError::CouldNotWriteBackupFile)?;
+    }
+    fs::write(&path, content).map_err(|_| WriteFileSaveError::CouldNotWriteFile)?;
+    Ok(())
 }

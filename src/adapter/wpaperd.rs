@@ -3,8 +3,10 @@ use std::{env, fs, path::PathBuf};
 use thiserror::Error;
 use tokio::process::Command;
 
+const WPAPERD_CONFIG_LOCATION: &'static str = ".config/wpaperd/wallpaper.toml";
+
 use crate::{
-    adapter::{AdapterError, WallpaperAdapter},
+    adapter::{AdapterError, WallpaperAdapter, write_file_save},
     daemon::WallpaperState,
 };
 
@@ -12,12 +14,7 @@ use crate::{
 pub struct WpaperdAdapter {}
 
 #[derive(Debug, Clone, Error)]
-pub enum WpaperdError {
-    #[error("Could not create all directories: {0}")]
-    CreateAllDirs(PathBuf),
-    #[error("Could not write to config at {0}")]
-    WriteToConfig(PathBuf),
-}
+pub enum WpaperdError {}
 
 impl WallpaperAdapter for WpaperdAdapter {
     type Input = WallpaperState;
@@ -31,15 +28,15 @@ impl WallpaperAdapter for WpaperdAdapter {
         }
 
         let config_path = env::home_dir().unwrap();
-        let config_path = config_path.join(PathBuf::from(".config/wpaperd/wallpaper.toml"));
+        let config_path = config_path.join(PathBuf::from(WPAPERD_CONFIG_LOCATION));
 
-        let config_parent_dir = config_path.parent().to_owned().unwrap().to_path_buf();
-        println!("{config_str}");
+        write_file_save(&config_path, config_str)?;
 
-        fs::create_dir_all(&config_parent_dir)
-            .map_err(|_| WpaperdError::CreateAllDirs(config_parent_dir))?;
-        fs::write(&config_path, config_str)
-            .map_err(|_| WpaperdError::WriteToConfig(config_path))?;
+        Command::new("wpaperctl")
+            .args(&["reload-wallpaper"])
+            .status()
+            .await
+            .map_err(|_e| AdapterError::UtilityNotInstalled("wpaperctl".to_string()))?;
 
         Ok(())
     }
