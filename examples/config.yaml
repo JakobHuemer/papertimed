@@ -1,5 +1,5 @@
 global: 
- adapter: wpaperd
+ adapter: hyprpaper
 
 schedules:
   - id: "school"
@@ -7,7 +7,7 @@ schedules:
       - week_days: ["mon", "tue", "wed", "thu", "fri"]
       - day_time:
           from: 08:00
-          to: 15:00
+          to: 17:00
   - id: "hello"
     rules:
       - year_days: [1, 4, 6, 7]

@@ -1,9 +1,9 @@
 use crate::config::AppConfig;
 
+mod adapter;
 mod config;
 mod daemon;
 mod evaluator;
-mod adapter;
 
 pub async fn run() {
     let app_config = AppConfig::new();
@@ -12,8 +12,6 @@ pub async fn run() {
         app_config.app_settings.clone(),
         app_config.config_rx.resubscribe(),
     );
-
-    dbg!(app_config);
 
     d.start().await;
 }

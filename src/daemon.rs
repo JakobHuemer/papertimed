@@ -4,7 +4,7 @@ use std::{
     time::Duration,
 };
 
-use tokio::{process::Command, sync::broadcast::Receiver, time::sleep};
+use tokio::{sync::broadcast::Receiver, time::sleep};
 
 use crate::{
     adapter::{
@@ -60,7 +60,6 @@ impl Daemon {
 
                 match &mut self.adapter {
                     AdapterDispatcher::Hyprpaper(a) => {
-                        println!("LAJSDÖAJSDÖLJASDÖLJASÖLDJÖLASJDÖL");
                         if let Err(e) = a.update(self.state.clone()).await {
                             dbg!(e);
                         }

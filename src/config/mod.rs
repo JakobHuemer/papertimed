@@ -2,8 +2,8 @@ use config::Config;
 use thiserror::Error;
 use tokio::sync::broadcast::{self, Receiver, Sender};
 
-pub use crate::config::raw::{Adapter, GlobalSettings, Rule, Schedule, WrappedWeekDaySet};
-use crate::config::raw::{RawAppSettings, RawWallpaper};
+use crate::config::raw::RawAppSettings;
+pub use crate::config::raw::{Adapter, GlobalSettings, Rule, Schedule};
 
 mod raw;
 
@@ -36,8 +36,6 @@ impl AppConfig {
         self.app_settings = settings.clone();
 
         let _ = self.config_tx.send(settings);
-
-        todo!()
     }
 
     fn load_config() -> AppSettings {
@@ -67,7 +65,10 @@ pub struct AppSettings {
 }
 
 #[derive(Debug, Clone, Error)]
-pub enum AppSettingsParseError {}
+pub enum AppSettingsParseError {
+    #[error("schedule '{0}' does not exist")]
+    ScheduleDoesNotExist(String),
+}
 
 impl TryFrom<RawAppSettings> for AppSettings {
     type Error = AppSettingsParseError;
@@ -75,14 +76,21 @@ impl TryFrom<RawAppSettings> for AppSettings {
     fn try_from(app_settings: RawAppSettings) -> Result<Self, Self::Error> {
         let mut wallpapers: Vec<Wallpaper> = vec![];
 
+        let mut schedules_map = std::collections::HashMap::new();
+        for schedule in app_settings.schedules {
+            schedules_map.insert(schedule.id.clone(), schedule);
+        }
+
         for wp in app_settings.wallpapers {
-            println!("------------------------------------\n{}", wp.filename);
-            let schedules: Vec<Schedule> = app_settings
+            let schedules: Vec<Schedule> = wp
                 .schedules
                 .iter()
-                .filter(|schedule| wp.schedules.contains(&schedule.id))
-                .map(|s| s.clone())
-                .collect();
+                .map(|sched_id| {
+                    schedules_map.get(sched_id).cloned().ok_or_else(|| {
+                        AppSettingsParseError::ScheduleDoesNotExist(sched_id.clone())
+                    })
+                })
+                .collect::<Result<Vec<Schedule>, AppSettingsParseError>>()?;
 
             let new_wp = Wallpaper {
                 schedules,
