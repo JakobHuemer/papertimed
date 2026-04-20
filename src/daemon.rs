@@ -4,7 +4,8 @@ use tokio::{sync::broadcast::Receiver, time::sleep};
 
 use crate::{
     adapter::{
-        AdapterDispatcher, WallpaperAdapter, hyprpaper::HyprpaperAdapter, wpaperd::WpaperdAdapter,
+        AdapterDispatcher, WallpaperAdapter, custom::CustomAdapter, hyprpaper::HyprpaperAdapter,
+        wpaperd::WpaperdAdapter,
     },
     config::{Adapter, AppSettings, Wallpaper},
     evaluator::Evaluator,
@@ -26,9 +27,10 @@ pub struct WallpaperState {
 
 impl Daemon {
     pub fn new(settings: AppSettings, settings_rx: Receiver<AppSettings>) -> Self {
-        let adapter = match settings.global.adapter {
+        let adapter = match settings.global.adapter.clone() {
             Adapter::Wpaperd => AdapterDispatcher::Wpaperd(WpaperdAdapter::default()),
             Adapter::Hyprpaper => AdapterDispatcher::Hyprpaper(HyprpaperAdapter::default()),
+            Adapter::Custom(command) => AdapterDispatcher::Custom(CustomAdapter { command }),
         };
 
         Self {
@@ -49,10 +51,14 @@ impl Daemon {
             let ret = match &mut self.adapter {
                 AdapterDispatcher::Hyprpaper(a) => a.update(self.state.clone()).await,
                 AdapterDispatcher::Wpaperd(a) => a.update(self.state.clone()).await,
+                AdapterDispatcher::Custom(a) => a.update(self.state.clone()).await,
             };
 
             match ret {
-                Err(e) => panic!("{}", e),
+                Err(e) => {
+                    dbg!(&e);
+                    panic!("{}", e)
+                }
                 _ => {}
             }
 

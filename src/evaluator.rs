@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use chrono::{Datelike, Local};
 
 use crate::{
-    config::{AppSettings, Rule, Wallpaper},
+    config::{AppSettings, Rule},
     daemon::WallpaperState,
 };
 

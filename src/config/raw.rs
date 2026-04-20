@@ -22,6 +22,7 @@ pub struct GlobalSettings {
 pub enum Adapter {
     Wpaperd,
     Hyprpaper,
+    Custom(String),
 }
 
 #[derive(Clone, Debug, Deserialize)]

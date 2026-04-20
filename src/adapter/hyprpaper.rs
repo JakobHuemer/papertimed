@@ -5,7 +5,6 @@ use tokio::process::Command;
 
 use crate::{
     adapter::{AdapterError, WallpaperAdapter},
-    config::Adapter,
     daemon::WallpaperState,
 };
 

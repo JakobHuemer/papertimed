@@ -19,6 +19,10 @@ An example of a valid configuration is in [examples/config.yaml](./examples/conf
 - `wpaperd`: Overwrites the configuration at `~/.config/wpaperd/wallpaper.toml`
 - `hyprpaper`: Required hyprpaper ipc to be turned on. [More info on
   hyprpaper](https://wiki.hypr.land/Hypr-Ecosystem/hyprpaper/)
+- `custom`: Define a custom shell command that is executed for every image on
+  every monitor with monitor and image injected using 
+  [MiniJinja](https://github.com/mitsuhiko/minijinja) for templating.
+  e.g.: `awww -o {{ monitor }} {{ image }}`
 
 ### `global`
 
@@ -59,7 +63,7 @@ An array of all schedules that can then be assigned to wallpapers:
 - [ ] Wallpaper schedules support custom metadata that can be forwarded to the
   wallpaper utility
 - [ ] Manual and automatic timezone selection
-- [ ] Custom schedule definition with a shell command
+- [x] Custom schedule definition with a shell command
 - [ ] Scheduled sleep instead of polling
 - [X] Restructure config to allow reusing wallpapers and have a binding allowing
   config structure

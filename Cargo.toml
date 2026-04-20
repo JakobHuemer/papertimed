@@ -7,6 +7,7 @@ license = "mit"
 [dependencies]
 chrono = { version = "0.4.44", features = ["serde"] }
 config = "0.15.22"
+minijinja = "2.19.0"
 serde = { version = "1.0.228", features = ["derive"] }
 thiserror = "2.0.18"
 tokio = { version = "1.52.0", features = ["full", "macros", "sync", "time", "tokio-macros"] }
