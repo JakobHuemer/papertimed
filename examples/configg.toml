@@ -1,0 +1,21 @@
+
+[global]
+
+adapter = "wpaperd"
+
+[[schedules]]
+
+    id = "school"
+
+    [[schedules.rules]]
+
+        week_days = ["mon", "tue", "fri", "sat", "sun"]
+
+    [[schedules.rules]]
+
+        day_time = {from = "00:00", to = "23:00:00"}
+
+    [[schedules.rules]]
+
+        year_days = [1, 3, 255, 340]
+

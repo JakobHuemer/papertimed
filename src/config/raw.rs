@@ -1,54 +1,14 @@
 use chrono::{NaiveTime, WeekdaySet};
-use config::Config;
 use serde::Deserialize;
-use tokio::sync::broadcast::{self, Receiver, Sender};
-
-#[derive(Debug)]
-pub struct AppConfig {
-    pub config_rx: Receiver<AppSettings>,
-    config_tx: Sender<AppSettings>,
-
-    pub app_settings: AppSettings,
-}
-
-impl AppConfig {
-    pub fn new() -> Self {
-        let settings = Self::load_config();
-
-        let (config_tx, config_rx) = broadcast::channel::<AppSettings>(16);
-
-        Self {
-            config_rx,
-            config_tx,
-            app_settings: settings,
-        }
-    }
-
-    pub async fn reload(&mut self) {
-        let settings = Self::load_config();
-
-        self.app_settings = settings.clone();
-
-        let _ = self.config_tx.send(settings);
-    }
-
-    fn load_config() -> AppSettings {
-        let settings = Config::builder()
-            .add_source(config::File::with_name("examples/config"))
-            .add_source(config::Environment::with_prefix("APP"))
-            .build()
-            .unwrap();
-
-        settings.try_deserialize::<AppSettings>().unwrap()
-    }
-}
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub struct AppSettings {
+pub struct RawAppSettings {
     pub global: GlobalSettings,
     #[serde(default)]
-    pub wallpapers: Vec<Wallpaper>,
+    pub wallpapers: Vec<RawWallpaper>,
+    #[serde(default)]
+    pub schedules: Vec<Schedule>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -66,15 +26,17 @@ pub enum Adapter {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub struct Wallpaper {
+pub struct RawWallpaper {
     pub filename: String,
-    pub schedules: Vec<RepetitionSchedule>,
+    #[serde(default)]
+    pub monitors: Vec<String>,
+    pub schedules: Vec<String>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub struct RepetitionSchedule {
-    #[serde(default)]
+pub struct Schedule {
+    pub id: String,
     pub rules: Vec<Rule>,
 }
 

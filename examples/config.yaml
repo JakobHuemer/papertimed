@@ -1,0 +1,29 @@
+global: 
+ adapter: wpaperd
+
+schedules:
+  - id: "school"
+    rules:
+      - week_days: ["mon", "tue", "wed", "thu", "fri"]
+      - day_time:
+          from: 08:00
+          to: 15:00
+  - id: "hello"
+    rules:
+      - year_days: [1, 4, 6, 7]
+
+
+wallpapers:
+  - filename: "someiage.jpg"
+    monitors: ["eDP-1"]
+    schedules:
+      - school
+
+  - filename: "jamoin"
+    schedules:
+      - hello
+
+  - filename: "lkjsdfljsdfl"
+    schedules:
+      - hello
+      - school
