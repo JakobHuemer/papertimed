@@ -12,14 +12,7 @@ use crate::{
 pub struct HyprpaperAdapter {}
 
 #[derive(Debug, Clone, Error)]
-pub enum HyprpaperError {
-    #[error("Could not write to config at {0}")]
-    WriteToConfig(PathBuf),
-    #[error("No wallpaper is currently set")]
-    NoWallpaper,
-    #[error("Hyprpaper command failed wit exit code {0} and message: {1}")]
-    HyprpaperFailedWith(i32, String),
-}
+pub enum HyprpaperError {}
 
 impl WallpaperAdapter for HyprpaperAdapter {
     type Input = WallpaperState;

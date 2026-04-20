@@ -1,3 +1,5 @@
+use std::{env, path::PathBuf};
+
 use config::Config;
 use thiserror::Error;
 use tokio::sync::broadcast::{self, Receiver, Sender};
@@ -6,6 +8,8 @@ use crate::config::raw::RawAppSettings;
 pub use crate::config::raw::{Adapter, GlobalSettings, Rule, Schedule};
 
 mod raw;
+
+const CONFIGURATION_LOCATION: &str = ".config/papertimed/config";
 
 #[derive(Debug)]
 pub struct AppConfig {
@@ -39,8 +43,16 @@ impl AppConfig {
     }
 
     fn load_config() -> AppSettings {
+        let config_path = env::var("PAPERTIMED_CONFIG_PATH").unwrap_or_else(|_| {
+            format!(
+                "{}/{}",
+                env::var("HOME").expect("HOME not set"),
+                CONFIGURATION_LOCATION
+            )
+        });
+
         let settings = Config::builder()
-            .add_source(config::File::with_name("examples/config"))
+            .add_source(config::File::with_name(config_path.as_str()))
             .add_source(config::Environment::with_prefix("APP"))
             .build()
             .unwrap();
