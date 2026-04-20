@@ -61,7 +61,7 @@ An array of all schedules that can then be assigned to wallpapers:
 - [ ] Manual and automatic timezone selection
 - [ ] Custom schedule definition with a shell command
 - [ ] Scheduled sleep instead of polling
-- [ ] Restructure config to allow reusing wallpapers and have a binding allowing
+- [X] Restructure config to allow reusing wallpapers and have a binding allowing
   config structure
 - [ ] Add support for schedule types
   - [ ] cron
