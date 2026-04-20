@@ -54,7 +54,7 @@ An array of all schedules that can then be assigned to wallpapers:
 - [X] Basic daily/weekly/yearly wallpaper schedule for `wpaperd` utility
 - [x] Support for multiple wallpaper utilities
 - [X] Preset profiles for different wallpaper utilities like `wpaperd`, `hyprpaper`,
-- [ ] Per monitor schedules
+- [ ] Per monitor schedules/wallpapers
   etc.
 - [ ] Wallpaper schedules support custom metadata that can be forwarded to the
   wallpaper utility

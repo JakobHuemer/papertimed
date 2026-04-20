@@ -1,15 +1,10 @@
-use std::{
-    fs,
-    path::{Path, PathBuf},
-    time::Duration,
-};
+use std::time::Duration;
 
 use tokio::{sync::broadcast::Receiver, time::sleep};
 
 use crate::{
     adapter::{
-        AdapterDispatcher, AdapterInput, WallpaperAdapter, hyprpaper::HyprpaperAdapter,
-        wpaperd::WpaperdAdapter,
+        AdapterDispatcher, WallpaperAdapter, hyprpaper::HyprpaperAdapter, wpaperd::WpaperdAdapter,
     },
     config::{Adapter, AppSettings, Wallpaper},
     evaluator::Evaluator,
