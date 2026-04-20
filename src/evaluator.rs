@@ -1,6 +1,11 @@
+use std::collections::HashMap;
+
 use chrono::{Datelike, Local};
 
-use crate::config::{AppSettings, Rule, Wallpaper};
+use crate::{
+    config::{AppSettings, Rule, Wallpaper},
+    daemon::WallpaperState,
+};
 
 #[derive(Clone, Debug)]
 pub struct Evaluator {}
@@ -11,11 +16,11 @@ impl Evaluator {
     }
 
     /// Evaluates the background image file path for a given AppSettings struct.
-    pub fn evaluate_wallpaper<'b>(&self, settings: &'b AppSettings) -> Option<&'b Wallpaper> {
-        // walk through
+    pub fn evaluate_wallpaper(&self, settings: &AppSettings) -> WallpaperState {
         let now = Local::now().naive_local();
+        let mut wallpapers_by_monitor = HashMap::new();
 
-        let mut bg = settings.wallpapers.iter().filter(|wp| {
+        let active_wallpapers = settings.wallpapers.iter().filter(|wp| {
             wp.schedules.iter().any(|schedule| {
                 schedule.rules.iter().all(|rule| match rule {
                     Rule::DayTime { from, to } => *from <= now.time() && *to > now.time(),
@@ -27,6 +32,14 @@ impl Evaluator {
             })
         });
 
-        bg.next()
+        for wallpaper in active_wallpapers {
+            for monitor in &wallpaper.monitors {
+                wallpapers_by_monitor.insert(monitor.clone(), wallpaper.clone());
+            }
+        }
+
+        WallpaperState {
+            wallpapers: wallpapers_by_monitor,
+        }
     }
 }

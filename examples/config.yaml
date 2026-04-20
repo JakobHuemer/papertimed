@@ -12,16 +12,22 @@ schedules:
     rules:
       - year_days: [1, 4, 6, 7]
 
+  - id: main
+    rules:
+      - day_time:
+          from: 05:00
+          to: 23:59
 
 wallpapers:
+  - filename: "maincat.jpg"
+    monitors: ["HDMI-A-1", "DP-1"]
+    schedules:
+      - main
+
   - filename: "someiage.jpg"
     monitors: ["eDP-1"]
     schedules:
       - school
-
-  - filename: "jamoin"
-    schedules:
-      - hello
 
   - filename: "lkjsdfljsdfl"
     schedules:

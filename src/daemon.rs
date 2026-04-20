@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{collections::HashMap, time::Duration};
 
 use tokio::{sync::broadcast::Receiver, time::sleep};
 
@@ -21,7 +21,7 @@ pub struct Daemon {
 
 #[derive(Default, Clone, Debug)]
 pub struct WallpaperState {
-    pub current_wallpaper: Option<Wallpaper>,
+    pub wallpapers: HashMap<String, Wallpaper>,
 }
 
 impl Daemon {
@@ -33,43 +33,33 @@ impl Daemon {
 
         Self {
             evaluator: Evaluator::new(),
+            state: WallpaperState::default(),
             settings_rx,
             settings,
-            state: WallpaperState::default(),
             adapter,
         }
     }
 
     pub async fn start(&mut self) {
         loop {
-            if let Some(bg) = self.evaluator.evaluate_wallpaper(&self.settings)
-                && !self
-                    .state
-                    .current_wallpaper
-                    .as_ref()
-                    .is_some_and(|prev_bg| prev_bg.filename == bg.filename)
-            {
-                println!("BG: {:?}", bg);
+            let wallpaper_state = self.evaluator.evaluate_wallpaper(&self.settings);
 
-                self.state.current_wallpaper = Some(bg.clone());
+            println!("BG: {:?}", wallpaper_state);
 
-                match &mut self.adapter {
-                    AdapterDispatcher::Hyprpaper(a) => {
-                        if let Err(e) = a.update(self.state.clone()).await {
-                            dbg!(e);
-                        }
+            self.state = wallpaper_state.clone();
+
+            match &mut self.adapter {
+                AdapterDispatcher::Hyprpaper(a) => {
+                    if let Err(e) = a.update(self.state.clone()).await {
+                        dbg!(e);
                     }
-                    AdapterDispatcher::Wpaperd(a) => {
-                        if let Err(e) = a.update(self.state.clone()).await {
-                            dbg!(e);
-                        }
+                }
+                AdapterDispatcher::Wpaperd(a) => {
+                    if let Err(e) = a.update(self.state.clone()).await {
+                        dbg!(e);
                     }
-                };
-
-                dbg!(&self.state);
-            } else {
-                println!("Nothing");
-            }
+                }
+            };
 
             sleep(Duration::from_secs(2)).await;
         }

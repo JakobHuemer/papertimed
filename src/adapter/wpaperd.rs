@@ -25,28 +25,24 @@ impl WallpaperAdapter for WpaperdAdapter {
     type Error = WpaperdError;
 
     async fn update(&mut self, input: Self::Input) -> Result<(), Self::Error> {
-        if let Some(bg) = input.current_wallpaper {
-            let config_path = env::home_dir().unwrap();
-            let config_path = config_path.join(PathBuf::from(".config/wpaperd/wallpaper.toml"));
+        let mut config_str = String::new();
 
-            let new_content = format!("[default]\npath = '{}'", bg.filename);
-
-            let config_parent_dir = config_path.parent().to_owned().unwrap().to_path_buf();
-
-            fs::create_dir_all(&config_parent_dir)
-                .map_err(|_| WpaperdError::CreateAllDirs(config_parent_dir))?;
-            fs::write(&config_path, new_content)
-                .map_err(|_| WpaperdError::WriteToConfig(config_path))?;
-
-            let _status = Command::new("wpaperctl")
-                .args(&["reload-wallpaper"])
-                .status()
-                .await
-                .map_err(|_e| WpaperdError::WpaperdNotInstalled)?;
-
-            return Ok(());
+        for (monitor, wallpaper) in input.wallpapers {
+            config_str
+                .push_str(format!("[{}]\npath = \"{}\"\n\n", monitor, wallpaper.filename).as_str());
         }
 
-        Err(WpaperdError::NoWallpaper)
+        let config_path = env::home_dir().unwrap();
+        let config_path = config_path.join(PathBuf::from(".config/wpaperd/wallpaper.toml"));
+
+        let config_parent_dir = config_path.parent().to_owned().unwrap().to_path_buf();
+        println!("{config_str}");
+
+        fs::create_dir_all(&config_parent_dir)
+            .map_err(|_| WpaperdError::CreateAllDirs(config_parent_dir))?;
+        fs::write(&config_path, config_str)
+            .map_err(|_| WpaperdError::WriteToConfig(config_path))?;
+
+        Ok(())
     }
 }

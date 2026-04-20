@@ -25,16 +25,18 @@ pub enum HyprpaperError {
 impl WallpaperAdapter for HyprpaperAdapter {
     type Error = HyprpaperError;
     type Input = WallpaperState;
-
     async fn update(&mut self, input: Self::Input) -> Result<(), Self::Error> {
-        if let Some(bg) = input.current_wallpaper {
-            // hyprctl hyprpaper wallpaper '[mon], [path], [fit_mode]'
+        if input.wallpapers.is_empty() {
+            return Ok(());
+        }
 
+        for (monitor, wallpaper) in &input.wallpapers {
+            // hyprctl hyprpaper wallpaper '[mon], [path]'
             let output = Command::new("hyprctl")
                 .args(&[
                     "hyprpaper",
                     "wallpaper",
-                    format!(",{}", bg.filename).as_str(),
+                    format!("{},{}", monitor, wallpaper.filename).as_str(),
                 ])
                 .output()
                 .await
@@ -48,6 +50,6 @@ impl WallpaperAdapter for HyprpaperAdapter {
             }
         }
 
-        Err(HyprpaperError::NoWallpaper)
+        Ok(())
     }
 }
