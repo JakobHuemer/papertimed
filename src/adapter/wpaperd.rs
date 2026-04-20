@@ -3,7 +3,10 @@ use std::{env, fs, path::PathBuf};
 use thiserror::Error;
 use tokio::process::Command;
 
-use crate::{adapter::WallpaperAdapter, daemon::WallpaperState};
+use crate::{
+    adapter::{AdapterError, WallpaperAdapter},
+    daemon::WallpaperState,
+};
 
 #[derive(Clone, Debug, Copy, Default)]
 pub struct WpaperdAdapter {}
@@ -14,17 +17,12 @@ pub enum WpaperdError {
     CreateAllDirs(PathBuf),
     #[error("Could not write to config at {0}")]
     WriteToConfig(PathBuf),
-    #[error("wpaperd is not installed")]
-    WpaperdNotInstalled,
-    #[error("No wallpaper is currently set")]
-    NoWallpaper,
 }
 
 impl WallpaperAdapter for WpaperdAdapter {
     type Input = WallpaperState;
-    type Error = WpaperdError;
 
-    async fn update(&mut self, input: Self::Input) -> Result<(), Self::Error> {
+    async fn update(&mut self, input: Self::Input) -> Result<(), AdapterError> {
         let mut config_str = String::new();
 
         for (monitor, wallpaper) in input.wallpapers {

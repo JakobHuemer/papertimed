@@ -3,19 +3,19 @@ use std::path::PathBuf;
 use thiserror::Error;
 use tokio::process::Command;
 
-use crate::{adapter::WallpaperAdapter, daemon::WallpaperState};
+use crate::{
+    adapter::{AdapterError, WallpaperAdapter},
+    config::Adapter,
+    daemon::WallpaperState,
+};
 
 #[derive(Debug, Default, Clone)]
 pub struct HyprpaperAdapter {}
 
 #[derive(Debug, Clone, Error)]
 pub enum HyprpaperError {
-    #[error("Could not create all directories: {0}")]
-    CreateAllDirs(PathBuf),
     #[error("Could not write to config at {0}")]
     WriteToConfig(PathBuf),
-    #[error("hyprpaper is not installed")]
-    HyprpaperNotInstalled,
     #[error("No wallpaper is currently set")]
     NoWallpaper,
     #[error("Hyprpaper command failed wit exit code {0} and message: {1}")]
@@ -23,9 +23,8 @@ pub enum HyprpaperError {
 }
 
 impl WallpaperAdapter for HyprpaperAdapter {
-    type Error = HyprpaperError;
     type Input = WallpaperState;
-    async fn update(&mut self, input: Self::Input) -> Result<(), Self::Error> {
+    async fn update(&mut self, input: Self::Input) -> Result<(), AdapterError> {
         if input.wallpapers.is_empty() {
             return Ok(());
         }
@@ -40,13 +39,14 @@ impl WallpaperAdapter for HyprpaperAdapter {
                 ])
                 .output()
                 .await
-                .map_err(|_e| HyprpaperError::HyprpaperNotInstalled)?;
+                .map_err(|_e| AdapterError::UtilityNotInstalled("hyprpaper".to_string()))?;
 
             if !output.status.success() {
-                return Err(HyprpaperError::HyprpaperFailedWith(
-                    output.status.code().unwrap_or_default(),
-                    String::from_utf8(output.stdout).unwrap(),
-                ));
+                return Err(AdapterError::UtilityFailedWith {
+                    status_code: output.status.code().unwrap_or_default(),
+                    error_out: String::from_utf8(output.stdout).unwrap(),
+                    utility: "hyprpaper".to_string(),
+                });
             }
         }
 
