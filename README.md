@@ -8,11 +8,11 @@ First, make sure that your current background utility does not automatically
 switch wallpapers itself on a scheduled basis as this conflicts with papertimed.
 
 The configuration file for papertimed is located at
-`~/.config/papertimed/config.toml`.
+`~/.config/papertimed/config.yaml`.
 
 Supported file formats are: `JSON`, `TOML`, `YAML`, `INI`, `RON`, `JSON5`, `CORN` 
 
-An example of a valid configuration is in [examples/config.toml](./examples/config.toml).
+An example of a valid configuration is in [examples/config.yaml](./examples/config.yaml).
 
 ### Supported Adapters
 
@@ -30,21 +30,21 @@ An example of a valid configuration is in [examples/config.toml](./examples/conf
 An array of wallpapers where each element has:
 
 - `filename`: The filename of the background image
-- `schedules`: All schedules that exist for this image
+- `schedules`: An array of schedule `id`s when the immage should be shown
 
-### `wallpapers.schedules`
+### `schedules`
 
-An array of all schedules where the wallpaper is scheduled to be displayed, each
-schedule consisting of:
+An array of all schedules that can then be assigned to wallpapers:
 
+- `id`: A string identifying the schedule
 - `rules`: All rules of must be true for the schedule to take effect. You can
   define rules for daytime, weekday or day of the year, etc.
 
-### `wallpapers.schedules.rules`
+### `schedules.rules`
 
 - `day_time`: Define when on the day the schedule runs. e.g. 05:00 - 15:00
     - `from`/`to`: Daytime e.g. `05:23:50`.
-    - e.g. `{ from = "05:23:50", to = "14:15:00"}`
+    - e.g. from = 05:23:50, to = 14:15:00
 - `week_days`: Array of days when to run this schedule. e.g. `["monday", "tuesday", "wed"]`
 - `year_days`: Array of days in a year when to run this schedule. e.g. `[1, 4, 340]`
 
