@@ -63,4 +63,6 @@ schedule consisting of:
 - [ ] Scheduled sleep instead of polling
 - [ ] Restructure config to allow reusing wallpapers and have a binding allowing
   config structure
-
+- [ ] Add support for schedule types
+  - [ ] cron
+  - [ ] rrules
