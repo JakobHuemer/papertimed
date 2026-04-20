@@ -4,8 +4,7 @@ use tokio::{sync::broadcast::Receiver, time::sleep};
 
 use crate::{
     adapter::{
-        AdapterDispatcher, WallpaperAdapter, custom::CustomAdapter, hyprpaper::HyprpaperAdapter,
-        wpaperd::WpaperdAdapter,
+        AdapterDispatcher, WallpaperAdapter, custom::CustomAdapter, wpaperd::WpaperdAdapter,
     },
     config::{Adapter, AppSettings, Wallpaper},
     evaluator::Evaluator,
@@ -29,7 +28,9 @@ impl Daemon {
     pub fn new(settings: AppSettings, settings_rx: Receiver<AppSettings>) -> Self {
         let adapter = match settings.global.adapter.clone() {
             Adapter::Wpaperd => AdapterDispatcher::Wpaperd(WpaperdAdapter::default()),
-            Adapter::Hyprpaper => AdapterDispatcher::Hyprpaper(HyprpaperAdapter::default()),
+            Adapter::Hyprpaper => AdapterDispatcher::Custom(CustomAdapter {
+                command: "hyprctl hyprpaper wallpaper '{{ monitor }},{{ image }}'".to_string(),
+            }),
             Adapter::Custom(command) => AdapterDispatcher::Custom(CustomAdapter { command }),
         };
 
@@ -49,7 +50,7 @@ impl Daemon {
             self.state = wallpaper_state.clone();
 
             let ret = match &mut self.adapter {
-                AdapterDispatcher::Hyprpaper(a) => a.update(self.state.clone()).await,
+                // AdapterDispatcher::Hyprpaper(a) => a.update(self.state.clone()).await,
                 AdapterDispatcher::Wpaperd(a) => a.update(self.state.clone()).await,
                 AdapterDispatcher::Custom(a) => a.update(self.state.clone()).await,
             };

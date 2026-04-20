@@ -1,4 +1,4 @@
-use std::{env, path::PathBuf};
+use std::env;
 
 use config::Config;
 use thiserror::Error;

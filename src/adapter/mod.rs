@@ -6,12 +6,10 @@ const BACKUP_FILE_EXTENSION: &'static str = "pptmd-bkp";
 
 use crate::adapter::{
     custom::{CustomAdapter, CustomAdpaterError},
-    hyprpaper::{HyprpaperAdapter, HyprpaperError},
     wpaperd::{WpaperdAdapter, WpaperdError},
 };
 
 pub mod custom;
-pub mod hyprpaper;
 pub mod wpaperd;
 
 pub trait WallpaperAdapter: Default {
@@ -23,15 +21,11 @@ pub trait WallpaperAdapter: Default {
 #[derive(Clone, Debug)]
 pub enum AdapterDispatcher {
     Wpaperd(WpaperdAdapter),
-    Hyprpaper(HyprpaperAdapter),
     Custom(CustomAdapter),
 }
 
 #[derive(Debug, Error)]
 pub enum AdapterError {
-    #[error("hyprpaper: {0}")]
-    Hyprpaper(#[from] HyprpaperError),
-
     #[error("wpaperd: {0}")]
     Wpaperd(#[from] WpaperdError),
 

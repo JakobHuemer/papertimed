@@ -1,6 +1,6 @@
 global: 
- adapter:
-   custom: "awww img -o {{ monitor }} {{ image }}"
+ adapter: hyprpaper
+   # custom: "awww img -o {{ monitor }} {{ image }}"
 
 schedules:
   - id: "school"

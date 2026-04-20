@@ -27,7 +27,6 @@ impl WallpaperAdapter for CustomAdapter {
     type Input = WallpaperState;
 
     async fn update(&mut self, input: Self::Input) -> Result<(), super::AdapterError> {
-        dbg!(&input);
         let env = Environment::new();
 
         for (monitor, wallpaper) in &input.wallpapers {
@@ -51,9 +50,12 @@ impl WallpaperAdapter for CustomAdapter {
                 .map_err(|_| AdapterError::UtilityNotInstalled(parts[0].to_string()))?;
 
             if !output.status.success() {
+                let stdout_str = String::from_utf8_lossy(&output.stdout);
+                let stderr_str = String::from_utf8_lossy(&output.stderr);
+                let error_out = format!("\nstdout: {}\nstderr: {}", stdout_str, stderr_str);
                 return Err(AdapterError::UtilityFailedWith {
                     status_code: output.status.code().unwrap_or_default(),
-                    error_out: String::from_utf8_lossy(&output.stderr).to_string(),
+                    error_out,
                     utility: parts[0].to_string(),
                 });
             }
