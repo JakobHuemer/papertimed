@@ -3,6 +3,10 @@
   inputs,
   ...
 }: {
-  perSystem = {pkgs, ...}: {
+  perSystem = {
+    pkgs,
+    self',
+    ...
+  }: {
   };
 }
