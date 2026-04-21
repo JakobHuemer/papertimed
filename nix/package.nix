@@ -3,18 +3,11 @@
   inputs,
   ...
 }: {
-  imports = [inputs.flake-parts.flakeModules.easyOverlay];
-
   perSystem = {
     pkgs,
     self',
-    config,
     ...
   }: {
-    overlayAttrs = {
-      inherit (config.packages) papertimed;
-    };
-
     packages.default = self'.packages.papertimed;
 
     packages.papertimed = let
