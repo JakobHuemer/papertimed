@@ -2,6 +2,57 @@
 
 Papaertimed is a little daemon to controll which wallpaper is shown at what time.
 
+## Installation
+
+Currently, only installation via a nix flake is supported:
+
+Add this flake input to your flake:
+
+```nix
+# flake.nix
+{
+  inputs.papertimed.url = "github:jakobhuemer/papertimed";
+}
+```
+
+Then import the module and enable the service:
+
+```nix
+{
+  imports = [
+    inputs.papertimed.homeModules.default
+  ];
+
+  services.papertimed = {
+    enable = true;
+    
+    # settings = { };
+  };
+}
+```
+
+Use the overlay:
+
+```nix
+{
+  inputs.papertimed.url = "github:jakobhuemer/papertimed";
+
+  outputs = { self, nixpkgs, papertimed, ... }: {
+    nixosConfigurations.yourHost = nixpkgs.lib.nixosSystem {
+      modules = [
+        {
+          nixpkgs.overlays = [ papertimed.overlays.default ];
+
+          environment.systemPackages = with pkgs; [
+            papertimed
+          ];
+        }
+      ];
+    };
+  };
+}
+```
+
 ## Configuration
 
 First, make sure that your current background utility does not automatically
