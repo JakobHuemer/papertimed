@@ -17,9 +17,16 @@
     rust-overlay,
   }:
     flake-parts.lib.mkFlake {inherit inputs;} {
+      imports = [
+        ./nix/module.nix
+        ./nix/package.nix
+      ];
+
       systems = [
         "aarch64-linux"
+        "aarch64-darwin"
         "x86_64-linux"
+        "x86_64-darwin"
       ];
 
       perSystem = {

@@ -1,0 +1,8 @@
+{
+  self,
+  inputs,
+  ...
+}: {
+  perSystem = {pkgs, ...}: {
+  };
+}
