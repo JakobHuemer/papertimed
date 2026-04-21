@@ -66,6 +66,7 @@ An array of all schedules that can then be assigned to wallpapers:
 - [x] Custom schedule definition with a shell command
 - [ ] Scheduled sleep instead of polling
 - [X] Restructure config to allow reusing wallpapers and have a binding allowing
+- [ ] Home Manager Module + overlay
   config structure
 - [ ] Add support for schedule types
   - [ ] cron
