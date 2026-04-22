@@ -112,8 +112,7 @@ An array of all schedules that can then be assigned to wallpapers:
 - [X] Per monitor schedules/wallpapers
   etc.
 - [ ] Wallpaper schedules support custom metadata that can be forwarded to the
-  wallpaper utility
-- [ ] Manual and automatic timezone selection
+  wallpaper utility per wallpaper (like meta.fit being `cover` for one and `fit` for another image) - [ ] Manual and automatic timezone selection
 - [x] Custom schedule definition with a shell command
 - [ ] Scheduled sleep instead of polling
 - [X] Restructure config to allow reusing wallpapers and have a binding allowing
