@@ -89,7 +89,7 @@
             };
             Service = {
               Type = "simple";
-              ExecStart = "${lib.getExe config.services.papertimed.package}";
+              ExecStart = "${lib.getExe' config.services.papertimed.package "papertimed"}";
               Restart = "no";
             };
             Install = {
